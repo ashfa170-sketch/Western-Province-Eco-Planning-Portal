@@ -1,0 +1,5 @@
+const map=L.map('reportMap',{zoomControl:false}).setView([6.93,79.92],10);L.control.zoom({position:'bottomright'}).addTo(map);L.control.scale({metric:true,imperial:false}).addTo(map);
+const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+let marker=null;
+const FORM_BASE='https://docs.google.com/forms/d/e/1FAIpQLSc6rpZf2F5SnUR3QIbdyrpqcMvvxi2za5KKwBjpyGL0_whwGg/viewform?embedded=true';
+map.on('click',e=>{const lat=e.latlng.lat.toFixed(6),lng=e.latlng.lng.toFixed(6);if(marker)map.removeLayer(marker);marker=L.marker([lat,lng]).addTo(map);document.getElementById('coordBadge').textContent=`Selected location · ${lat}, ${lng}`;document.getElementById('formIframe').src=`${FORM_BASE}&entry.479157703=${encodeURIComponent(lat)}&entry.1055265949=${encodeURIComponent(lng)}`;marker.bindPopup('<div class="popup-title">Selected report location</div><div class="popup-sub">Coordinates have been added to the form.</div>').openPopup();});

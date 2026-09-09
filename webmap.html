@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Explore Map — Eco-Sensitive Areas & Development Pressure</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/webmap.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+</head>
+<body>
+<nav class="topnav">
+  <a class="brand" href="index.html"><span class="brand-mark">WP</span><span>Eco-Sensitive Areas &amp; Development Pressure</span></a>
+  <button class="hamburger" aria-label="Open navigation">☰</button>
+  <div class="links" id="navlinks">
+    <a href="index.html">Overview</a><a href="webmap.html" class="active">Explore Map</a><a href="public_report.html">Report a Change</a>
+  </div>
+</nav>
+
+<main id="appwrap">
+  <button id="sidebarToggle" aria-label="Open map controls">☰</button>
+  <aside id="sidebar">
+    <div class="sidebar-head">
+      <div><div class="eyebrow">Regional planning web map</div><h1>Explore the evidence</h1></div>
+      <button id="closeSidebar" class="icon-btn" aria-label="Close controls">×</button>
+    </div>
+
+    <div class="mode-switch" aria-label="Map mode">
+      <button class="mode-btn active" data-mode="environment">Environment</button>
+      <button class="mode-btn" data-mode="development">Development</button>
+      <button class="mode-btn" data-mode="encroachment">Encroachment</button>
+    </div>
+
+    <section class="side-section intro-section">
+      <h2 id="modeTitle">Environmental sensitivity</h2>
+      <p id="modeText">Start with the areas that need environmental consideration. Turn layers on/off and click features for details.</p>
+    </section>
+
+    <section class="side-section">
+      <div class="section-title"><h2>Environmental sensitivity</h2><button class="info-btn" data-help="environment">i</button></div>
+      <label class="layer-item env"><input type="checkbox" data-layer="wetlands" checked><span class="swatch wetland"></span><span class="name">Wetlands &amp; marshes</span><span class="count" id="cnt-wetlands"></span></label>
+      <label class="layer-item env"><input type="checkbox" data-layer="mangroves" checked><span class="swatch mangrove"></span><span class="name">Mangroves</span><span class="count" id="cnt-mangroves"></span></label>
+      <label class="layer-item env"><input type="checkbox" data-layer="lagoon"><span class="swatch lagoon"></span><span class="name">Lagoons &amp; waterbodies</span><span class="count" id="cnt-lagoon"></span></label>
+      <label class="layer-item env"><input type="checkbox" data-layer="coastal"><span class="swatch coastal"></span><span class="name">100 m coastal planning buffer</span><span class="count" id="cnt-coastal"></span></label>
+    </section>
+
+    <section class="side-section">
+      <div class="section-title"><h2>Development pressure</h2><button class="info-btn" data-help="development">i</button></div>
+      <label class="layer-item dev"><input type="checkbox" data-layer="grid"><span class="swatch pressure"></span><span class="name">Building pressure cells (500 m)</span><span class="count" id="cnt-grid"></span></label>
+      <div class="range-wrap"><label for="gridOpacity">Cell opacity</label><input type="range" id="gridOpacity" min="0.15" max="0.9" step="0.05" value="0.55"></div>
+      <label class="layer-item dev"><input type="checkbox" data-layer="trajectory"><span class="swatch lulc"></span><span class="name">Land-use change: 2005–2025</span><span class="count" id="cnt-trajectory"></span></label>
+      <div id="timeSliderWrap">
+        <div class="range-label"><span>2005</span><span>2015</span><span>2025</span></div>
+        <input type="range" id="timeSlider" min="0" max="2" step="1" value="2">
+        <div>Showing classified land use in <strong id="yearBadge">2025</strong></div>
+      </div>
+    </section>
+
+    <section class="side-section">
+      <div class="section-title"><h2>Potential encroachment</h2><button class="info-btn" data-help="encroachment">i</button></div>
+      <label class="layer-item enc"><input type="checkbox" data-layer="hotspots" checked><span class="swatch hotspot"></span><span class="name">Potential encroachment sites</span><span class="count" id="cnt-hotspots"></span></label>
+      <label class="layer-item enc"><input type="checkbox" data-layer="priority"><span class="swatch priority"></span><span class="name">Planning priority cells</span><span class="count" id="cnt-priority"></span></label>
+      <div class="priority-filter">
+        <label for="prioritySelect">Show priority</label>
+        <select id="prioritySelect"><option value="all">All</option><option value="high">High</option><option value="moderate">Moderate</option><option value="lower">Lower</option></select>
+      </div>
+    </section>
+
+    <section class="side-section">
+      <div class="section-title"><h2>Public participation</h2><button class="info-btn" data-help="reports">i</button></div>
+      <label class="layer-item"><input type="checkbox" data-layer="reports" checked><span class="swatch report"></span><span class="name">Community reports</span><span class="count" id="cnt-reports">…</span></label>
+      <p class="small-note">Community reports are anonymous observations and are labelled <strong>unverified</strong> until reviewed.</p>
+      <a class="report-link" href="public_report.html">＋ Report an environmental change</a>
+    </section>
+
+    <section class="side-section">
+      <div class="section-title"><h2>Reference</h2><button class="info-btn" data-help="reference">i</button></div>
+      <label class="layer-item"><input type="checkbox" data-layer="roads"><span class="swatch roads"></span><span class="name">Road network</span></label>
+      <label class="layer-item"><input type="checkbox" data-layer="railways"><span class="swatch railways"></span><span class="name">Railway</span></label>
+      <label class="layer-item" checked><input type="checkbox" data-layer="admin" checked><span class="swatch boundary"></span><span class="name">Western Province boundary</span></label>
+    </section>
+
+    <section class="side-section">
+      <div class="section-title"><h2>Basemap</h2></div>
+      <div class="base-buttons"><button id="btn-osm" class="active">Light streets</button><button id="btn-sat">Satellite</button></div>
+    </section>
+
+    <div class="sidebar-footer"><a href="index.html#method">Methods &amp; data sources</a><span>Student planning project · 2026</span></div>
+  </aside>
+
+  <section id="mapCol">
+    <div id="map"></div>
+    <div class="map-title"><span class="kicker">WESTERN PROVINCE · SRI LANKA</span><strong id="mapModeLabel">Environmental sensitivity</strong></div>
+    <div class="map-actions"><div class="search-box"><input id="placeSearch" type="search" placeholder="Find place…" aria-label="Find place"><button id="searchBtn">Find</button></div><button id="locateBtn" title="Use your device location">◎</button><button id="legendBtn">Legend</button><button id="dashboardBtn">Planning summary</button></div>
+    <div id="legend" class="floating-panel"><div class="panel-head"><h3>Legend</h3><button class="panel-close" data-close="legend">×</button></div><div id="legendContent"></div></div>
+    <div id="dashPanel" class="floating-panel dashboard"><div class="panel-head"><div><div class="eyebrow">Decision support</div><h3>Planning summary</h3></div><button class="panel-close" data-close="dashPanel">×</button></div><div id="dashboardContent"></div></div>
+    <div id="infoPanel" class="floating-panel info-panel"><div class="panel-head"><h3 id="infoTitle">Layer information</h3><button class="panel-close" data-close="infoPanel">×</button></div><div id="infoContent"></div></div>
+    <div id="loadOverlay"><div class="spinner"></div><strong>Preparing the planning map…</strong><span id="loadPct">0 / 10 datasets</span></div>
+    <div id="mapHint">Tip: click a feature to see what the data mean. Use the three modes to keep the map readable.</div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script src="assets/nav.js"></script><script src="assets/webmap.js"></script>
+</body>
+</html>
