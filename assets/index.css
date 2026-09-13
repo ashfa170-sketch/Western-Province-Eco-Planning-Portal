@@ -25,11 +25,15 @@ ul.tight li{ margin-bottom:8px; }
 .hero {
     background-image:
         linear-gradient(
-            rgba(8, 28, 35, 0.68),
-            rgba(8, 28, 35, 0.68)
+            rgba(8, 30, 36, 0.58),
+            rgba(8, 30, 36, 0.58)
         ),
-        url("images/western-province-background.jpg");
+        url("western-province-background.jpg");
 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
