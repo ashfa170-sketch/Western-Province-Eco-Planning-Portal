@@ -21,3 +21,16 @@ table.datatable td{ padding:9px 10px; border-bottom:1px solid #eee; vertical-ali
 table.datatable tr:nth-child(even){ background:#faf9f4; }
 .note{ background:#FDF3E9; border-left:4px solid var(--risk-med); padding:14px 16px; border-radius:8px; font-size:13.5px; margin: 20px 0; }
 ul.tight li{ margin-bottom:8px; }
+/* Landing page background image */
+.hero {
+    background-image:
+        linear-gradient(
+            rgba(8, 28, 35, 0.68),
+            rgba(8, 28, 35, 0.68)
+        ),
+        url("images/western-province-background.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
