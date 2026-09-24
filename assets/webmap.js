@@ -106,7 +106,10 @@ function loadPublicReports() {
             console.log('Number of rows:', res.data.length);
 
             if (res.data.length > 0) {
-                console.log('First row headings:', Object.keys(res.data[0]));
+                console.log(
+                    'First row headings:',
+                    Object.keys(res.data[0])
+                );
             }
 
             layers.reports.clearLayers();
@@ -117,19 +120,48 @@ function loadPublicReports() {
 
                 console.log('Processing row:', row);
 
+                // -----------------------------------------
+                // Normalize column names
+                // -----------------------------------------
+                const cleanRow = {};
+
+                Object.keys(row).forEach(function(key) {
+                    const cleanKey = key
+                        .trim()
+                        .toLowerCase();
+
+                    cleanRow[cleanKey] = row[key];
+                });
+
+                // -----------------------------------------
+                // Latitude
+                // Supports both latitude and lattitude
+                // -----------------------------------------
                 const lat = parseFloat(
-                    row['latitude'] ||
-                    row['Latitude']
+                    cleanRow['latitude'] ||
+                    cleanRow['lattitude']
                 );
 
+                // -----------------------------------------
+                // Longitude
+                // Supports both longitude and longtitude
+                // -----------------------------------------
                 const lng = parseFloat(
-                    row['longitude'] ||
-                    row['Longitude']
+                    cleanRow['longitude'] ||
+                    cleanRow['longtitude']
                 );
 
-                console.log('Coordinates:', lat, lng);
+                console.log(
+                    'Coordinates:',
+                    lat,
+                    lng
+                );
 
-                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                // Ignore rows without valid coordinates
+                if (
+                    !Number.isFinite(lat) ||
+                    !Number.isFinite(lng)
+                ) {
 
                     console.warn(
                         'Skipping row because coordinates are invalid:',
@@ -139,22 +171,28 @@ function loadPublicReports() {
                     return;
                 }
 
+                // -----------------------------------------
+                // Other fields
+                // -----------------------------------------
                 const type =
-                    row['Encroachment Type'] ||
+                    cleanRow['encroachment type'] ||
                     'Environmental observation';
 
                 const description =
-                    row['Description'] ||
+                    cleanRow['description'] ||
                     'No description supplied.';
 
                 const area =
-                    row['Sensitive Area Type'] ||
+                    cleanRow['sensitive area type'] ||
                     'Not specified';
 
                 const when =
-                    row['Timestamp'] ||
+                    cleanRow['timestamp'] ||
                     'Not specified';
 
+                // -----------------------------------------
+                // Popup
+                // -----------------------------------------
                 const html = popup(
 
                     esc(type),
@@ -162,8 +200,8 @@ function loadPublicReports() {
                     'Community report · <span class="status-tag">Unverified</span>',
 
                     [
-                        ['Sensitive area', area],
-                        ['Reported', when]
+                        ['Sensitive area', esc(area)],
+                        ['Reported', esc(when)]
                     ],
 
                     `
@@ -183,6 +221,9 @@ function loadPublicReports() {
                     `
                 );
 
+                // -----------------------------------------
+                // Add marker to map
+                // -----------------------------------------
                 L.marker(
                     [lat, lng],
                     {
@@ -195,6 +236,9 @@ function loadPublicReports() {
                 n++;
             });
 
+            // -----------------------------------------
+            // Update counter
+            // -----------------------------------------
             reportCount = n;
 
             document.getElementById(
