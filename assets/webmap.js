@@ -8,7 +8,7 @@ const DATASETS=[
  ['encroachment_2016_2026_smooth.geojson','hotspots'],['encroachment_hotspot_grid.geojson','grid'],['lulc_change_trajectory.geojson','trajectory']
 ];
 const FORM_BASE='https://docs.google.com/forms/d/e/1FAIpQLSc6rpZf2F5SnUR3QIbdyrpqcMvvxi2za5KKwBjpyGL0_whwGg/viewform?usp=pp_url';
-const SHEET_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRuT-AZGMghDvSzHFGcqD7_tWSwfSt5Kkh8Pkx9w4dHUDlcsslFyE4lDCgyziVAqJSWFTThasyoAraV/pub?gid=2102497245&single=true&output=csv';
+const SHEET_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRuT-AZGMghDvSzHFGcqD7_tWSwfSt5Kkh8Pkx9w4dHUDlcsslFyE4lDCgyziVAqJSWFTThasyoAraV/pub?output=csv';
 
 const C={wetland:'#6F9278',mangrove:'#3F6B57',lagoon:'#4F86A8',coastal:'#A8C6CF',hotspot:'#A64B45',priorityHigh:'#A64B45',priorityModerate:'#C28A3B',priorityLower:'#728B78',pressure:'#7D6A45',report:'#315E7A',roads:'#777B7D',railways:'#9A6A78',boundary:'#263238'};
 const CAT={Housing:'#B48A3C',Tourism:'#C56D3B',Industry:'#9B4C4C',Commercial:'#76658D',Other:'#8A9690'};
@@ -81,17 +81,33 @@ function showInfo(key){const data={environment:['Environmental sensitivity','The
 
 function reportIcon(){return L.divIcon({className:'',html:'<div class="marker-report"></div>',iconSize:[15,15],iconAnchor:[7,7]})}
 function loadPublicReports() {
-    if (!window.Papa) return;
 
-    // Add timestamp to prevent the browser from using an old cached CSV
+    if (!window.Papa) {
+        console.error('PapaParse library is not loaded.');
+        return;
+    }
+
     const freshSheetURL = SHEET_CSV + '&t=' + Date.now();
 
+    console.log('Loading community reports from:');
+    console.log(freshSheetURL);
+
     Papa.parse(freshSheetURL, {
+
         download: true,
         header: true,
         skipEmptyLines: true,
 
         complete: function(res) {
+
+            console.log('Google Sheet data received:');
+            console.log(res.data);
+
+            console.log('Number of rows:', res.data.length);
+
+            if (res.data.length > 0) {
+                console.log('First row headings:', Object.keys(res.data[0]));
+            }
 
             layers.reports.clearLayers();
 
@@ -99,12 +115,27 @@ function loadPublicReports() {
 
             (res.data || []).forEach(function(row) {
 
-                // Your actual Google Sheet columns
-                const lat = parseFloat(row.latitude);
-                const lng = parseFloat(row.longitude);
+                console.log('Processing row:', row);
 
-                // Ignore rows without valid coordinates
+                const lat = parseFloat(
+                    row['latitude'] ||
+                    row['Latitude']
+                );
+
+                const lng = parseFloat(
+                    row['longitude'] ||
+                    row['Longitude']
+                );
+
+                console.log('Coordinates:', lat, lng);
+
                 if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+
+                    console.warn(
+                        'Skipping row because coordinates are invalid:',
+                        row
+                    );
+
                     return;
                 }
 
@@ -117,7 +148,7 @@ function loadPublicReports() {
                     'No description supplied.';
 
                 const area =
-                    row['Column 3'] ||
+                    row['Sensitive Area Type'] ||
                     'Not specified';
 
                 const when =
@@ -125,20 +156,29 @@ function loadPublicReports() {
                     'Not specified';
 
                 const html = popup(
+
                     esc(type),
+
                     'Community report · <span class="status-tag">Unverified</span>',
+
                     [
                         ['Sensitive area', area],
                         ['Reported', when]
                     ],
+
                     `
-                    <p style="font-size:11px;line-height:1.5;color:#5E6D73">
+                    <p style="
+                        font-size:11px;
+                        line-height:1.5;
+                        color:#5E6D73;
+                    ">
                         ${esc(description)}
                     </p>
 
                     <p class="small-note">
                         Community-submitted information.
-                        Verification is required before using it as confirmed evidence.
+                        Verification is required before using it
+                        as confirmed evidence.
                     </p>
                     `
                 );
@@ -157,21 +197,28 @@ function loadPublicReports() {
 
             reportCount = n;
 
-            document.getElementById('cnt-reports').textContent = num(n);
+            document.getElementById(
+                'cnt-reports'
+            ).textContent = num(n);
 
             updateDashboard();
 
-            console.log('Community reports loaded:', n);
+            console.log(
+                'COMMUNITY REPORTS SUCCESSFULLY LOADED:',
+                n
+            );
         },
 
         error: function(error) {
 
             console.error(
-                'Unable to load community reports:',
+                'COMMUNITY REPORT CSV ERROR:',
                 error
             );
 
-            document.getElementById('cnt-reports').textContent = '—';
+            document.getElementById(
+                'cnt-reports'
+            ).textContent = 'ERROR';
         }
     });
 }
