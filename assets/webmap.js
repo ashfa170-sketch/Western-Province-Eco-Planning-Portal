@@ -80,8 +80,101 @@ function updateDashboard(){const totalHa=hotspotFeatures.reduce((s,f)=>s+Number(
 function showInfo(key){const data={environment:['Environmental sensitivity','These layers show mapped environmental features used in the project. They help identify places where development should be examined with greater environmental attention.','Wetlands, mangroves, lagoons/waterbodies and the 100 m coastal planning buffer are separate evidence layers. The coastal buffer is a project-defined reference layer, not automatically a legal setback.'],development:['Development pressure','Development pressure is represented at an aggregated scale to keep the public web map responsive.','The 500 m cells summarise buildings near the mapped sensitive areas by tagged use. The land-use trajectory lets you compare the supplied classifications for 2005, 2015 and 2025.'],encroachment:['Potential encroachment','This interface uses the word potential deliberately. Spatial proximity or overlap does not, by itself, prove an unlawful or unauthorized development.','Use these layers to identify locations for planning attention and further field/authority verification. The priority layer is a screening tool based on relative development concentration.'],reports:['Community reports','Public submissions add local observations that may not appear in the spatial datasets.','Reports are anonymous and displayed as unverified. They can support monitoring and field verification, but should not be treated as confirmed evidence without review.'],reference:['Reference layers','Roads and railways provide context for accessibility and development patterns. The provincial boundary provides geographic orientation.','These are reference layers rather than encroachment indicators by themselves.']};const d=data[key];if(!d)return;document.getElementById('infoTitle').textContent=d[0];document.getElementById('infoContent').innerHTML=`<p>${d[1]}</p><div class="formula">${d[2]}</div>`;document.getElementById('infoPanel').classList.add('show')}
 
 function reportIcon(){return L.divIcon({className:'',html:'<div class="marker-report"></div>',iconSize:[15,15],iconAnchor:[7,7]})}
-function loadPublicReports(){if(!window.Papa)return;Papa.parse(SHEET_CSV,{download:true,header:true,skipEmptyLines:true,complete:res=>{layers.reports.clearLayers();let n=0;(res.data||[]).forEach(row=>{const lat=parseFloat(row.Latitude||row.latitude||row['entry.479157703']);const lng=parseFloat(row.Longitude||row.longitude||row['entry.1055265949']);if(!Number.isFinite(lat)||!Number.isFinite(lng))return;const type=row['Type of Issue']||row.Category||row.Issue||'Environmental observation';const area=row['Sensitive Area Type']||row['Sensitive Area']||'';const desc=row.Description||row.Details||row.Observation||'No description supplied.';const when=row.Date||row.Timestamp||'';const html=popup(esc(type),'Community report · <span class="status-tag">Unverified</span>',[['Sensitive area',area||'Not specified'],['Observed',when||'Not specified']],`<p style="font-size:11px;line-height:1.5;color:#5E6D73">${esc(desc)}</p><p class="small-note">Community-submitted information. Verification is required before using it as confirmed evidence.</p>`);L.marker([lat,lng],{icon:reportIcon()}).bindPopup(html).addTo(layers.reports);n++;});reportCount=n;document.getElementById('cnt-reports').textContent=num(n);updateDashboard();},error:()=>{document.getElementById('cnt-reports').textContent='—'}})}
+function loadPublicReports() {
+    if (!window.Papa) return;
 
+    // Add timestamp to prevent the browser from using an old cached CSV
+    const freshSheetURL = SHEET_CSV + '&t=' + Date.now();
+
+    Papa.parse(freshSheetURL, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+
+        complete: function(res) {
+
+            layers.reports.clearLayers();
+
+            let n = 0;
+
+            (res.data || []).forEach(function(row) {
+
+                // Your actual Google Sheet columns
+                const lat = parseFloat(row.latitude);
+                const lng = parseFloat(row.longitude);
+
+                // Ignore rows without valid coordinates
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                    return;
+                }
+
+                const type =
+                    row['Encroachment Type'] ||
+                    'Environmental observation';
+
+                const description =
+                    row['Description'] ||
+                    'No description supplied.';
+
+                const area =
+                    row['Column 3'] ||
+                    'Not specified';
+
+                const when =
+                    row['Timestamp'] ||
+                    'Not specified';
+
+                const html = popup(
+                    esc(type),
+                    'Community report · <span class="status-tag">Unverified</span>',
+                    [
+                        ['Sensitive area', area],
+                        ['Reported', when]
+                    ],
+                    `
+                    <p style="font-size:11px;line-height:1.5;color:#5E6D73">
+                        ${esc(description)}
+                    </p>
+
+                    <p class="small-note">
+                        Community-submitted information.
+                        Verification is required before using it as confirmed evidence.
+                    </p>
+                    `
+                );
+
+                L.marker(
+                    [lat, lng],
+                    {
+                        icon: reportIcon()
+                    }
+                )
+                .bindPopup(html)
+                .addTo(layers.reports);
+
+                n++;
+            });
+
+            reportCount = n;
+
+            document.getElementById('cnt-reports').textContent = num(n);
+
+            updateDashboard();
+
+            console.log('Community reports loaded:', n);
+        },
+
+        error: function(error) {
+
+            console.error(
+                'Unable to load community reports:',
+                error
+            );
+
+            document.getElementById('cnt-reports').textContent = '—';
+        }
+    });
+}
 map.on('click',e=>{const lat=e.latlng.lat.toFixed(6),lng=e.latlng.lng.toFixed(6),url=`${FORM_BASE}&entry.479157703=${encodeURIComponent(lat)}&entry.1055265949=${encodeURIComponent(lng)}`;L.popup().setLatLng(e.latlng).setContent(`<div class="map-tip"><div class="popup-title">Report this location?</div><div class="popup-sub">Coordinates: ${lat}, ${lng}</div><p class="small-note">Use the public reporting form to submit an anonymous observation.</p><a class="report-link" href="${url}" target="_blank" rel="noopener">Open reporting form →</a></div>`).openOn(map)});
 
 // Keep reports fresh without reloading the page.
