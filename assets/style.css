@@ -99,3 +99,68 @@ a, button, .card, .layer-item,
     color: #286B49;
     background: #E7F1E8;
 }
+
+
+/* ==================================
+   SUBTLE INTERFACE ANIMATIONS
+================================== */
+
+/* Page content entrance */
+@keyframes softFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-inner {
+    animation: softFadeIn 0.9s ease both;
+}
+
+.wrap {
+    animation: softFadeIn 0.7s ease both;
+}
+
+.report-page {
+    animation: softFadeIn 0.6s ease both;
+}
+
+/* Map sidebar entrance */
+#sidebar {
+    animation: sidebarAppear 0.45s ease both;
+}
+
+@keyframes sidebarAppear {
+    from {
+        opacity: 0.75;
+        transform: translateX(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Buttons */
+button,
+.button {
+    transition: all 0.25s ease;
+}
+
+button:hover {
+    filter: brightness(1.04);
+}
+
+/* Respect accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
