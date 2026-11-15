@@ -1,1 +1,527 @@
-.report-page{max-width:1240px;margin:auto;padding:30px 24px 45px}.report-head{display:grid;grid-template-columns:1.6fr .8fr;gap:35px;align-items:end;margin-bottom:20px}.report-head h1{font-size:34px;color:var(--navy);margin:6px 0 10px;letter-spacing:-.025em}.report-head p{font-size:14px;line-height:1.65;color:#5C6B72;max-width:760px}.privacy-box{border:1px solid #CAD7D2;background:#EFF4F1;padding:16px}.privacy-box strong{display:block;color:#355E50;font-size:13px;margin-bottom:6px}.privacy-box span{font-size:11px;line-height:1.55;color:#61736C}.report-grid{height:calc(100vh - 255px);min-height:510px;display:grid;grid-template-columns:1.2fr .8fr;background:#fff;border:1px solid #D4DDDF}.report-map-wrap{position:relative;min-height:0}.report-map-wrap #reportMap{height:100%;width:100%}.report-map-wrap #coordBadge{position:absolute;top:12px;left:12px;z-index:1000;background:#fff;border:1px solid #D2DBDE;padding:8px 10px;font-size:10px;color:#53666D;box-shadow:0 2px 7px rgba(0,0,0,.12)}.form-side{display:flex;flex-direction:column;border-left:1px solid #D4DDDF;min-width:0}.form-intro{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid #E3E8E9}.step{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700;flex:none}.form-intro strong{display:block;font-size:12px;color:var(--navy)}.form-intro small{display:block;font-size:10px;color:#78858A;margin-top:3px;line-height:1.35}.form-side iframe{width:100%;flex:1;border:0;min-height:350px}.form-foot{padding:10px 14px;background:#F5F7F6;border-top:1px solid #DDE4E3;color:#718079;font-size:10px;line-height:1.5}@media(max-width:850px){.report-head{grid-template-columns:1fr}.report-grid{height:auto;min-height:0;grid-template-columns:1fr}.report-map-wrap{height:360px}.form-side{height:620px;border-left:0;border-top:1px solid #D4DDDF}.report-head h1{font-size:29px}}
+
+/* =========================================
+   WESTERN PROVINCE COMMUNITY REPORTING
+   Forest green / sage green interface
+========================================= */
+
+:root {
+    --report-green: #24513D;
+    --report-dark: #173D2D;
+    --report-mid: #43875B;
+    --report-light: #E8F2E8;
+    --report-sage: #F2F7F0;
+    --report-border: #D9E6D9;
+    --report-text: #263D31;
+    --report-muted: #718176;
+    --report-white: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--report-sage);
+    color: var(--report-text);
+}
+
+.report-page {
+    max-width: 1440px;
+    margin: auto;
+    padding: 34px 30px 55px;
+}
+
+/* HEADER */
+
+.report-hero {
+    display: grid;
+    grid-template-columns: 1.5fr 0.75fr;
+    gap: 35px;
+    align-items: center;
+    margin-bottom: 30px;
+    animation: reportFade 0.7s ease both;
+}
+
+.report-hero h1 {
+    font-size: clamp(30px, 4vw, 44px);
+    line-height: 1.12;
+    color: var(--report-dark);
+    margin: 10px 0 13px;
+    letter-spacing: -1.4px;
+}
+
+.report-hero > div:first-child > p {
+    color: #64766A;
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 780px;
+}
+
+.eyebrow,
+.section-kicker {
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    font-weight: 800;
+    color: var(--report-mid);
+}
+
+.privacy-box {
+    background: #E5F0E5;
+    border: 1px solid #CFDFCF;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.privacy-icon {
+    display: block;
+    font-size: 26px;
+    color: var(--report-mid);
+    margin-bottom: 9px;
+}
+
+.privacy-box strong {
+    color: var(--report-dark);
+    font-size: 14px;
+}
+
+.privacy-box p {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #63776A;
+    margin: 8px 0 0;
+}
+
+/* MAIN LAYOUT */
+
+.report-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.report-map-panel,
+.report-form-panel {
+    background: var(--report-white);
+    border: 1px solid var(--report-border);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(31, 76, 48, 0.055);
+    animation: reportFade 0.8s ease both;
+}
+
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 21px 22px 17px;
+    border-bottom: 1px solid #E9F0E8;
+}
+
+.panel-heading h2 {
+    color: var(--report-dark);
+    font-size: 18px;
+    margin: 6px 0;
+}
+
+.panel-heading p {
+    color: var(--report-muted);
+    font-size: 11px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.panel-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--report-light);
+    color: var(--report-green);
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    flex: none;
+}
+
+/* MAP */
+
+.report-map-wrap {
+    position: relative;
+    height: 470px;
+}
+
+.report-map-wrap #reportMap {
+    height: 100%;
+    width: 100%;
+}
+
+#coordBadge {
+    position: absolute;
+    z-index: 1000;
+    left: 14px;
+    top: 14px;
+    padding: 10px 13px;
+    border-radius: 8px;
+    background: white;
+    color: var(--report-dark);
+    font-size: 11px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+
+.location-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #C18A38;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.selected-location {
+    background: #F0F6EF;
+    padding: 15px 20px;
+    border-top: 1px solid var(--report-border);
+}
+
+.selected-location span {
+    display: block;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    color: var(--report-muted);
+    margin-bottom: 6px;
+}
+
+.selected-location strong {
+    font-size: 13px;
+    color: var(--report-dark);
+}
+
+.map-help {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    padding: 13px 20px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--report-muted);
+}
+
+/* FORM */
+
+.report-form-panel {
+    padding-bottom: 20px;
+}
+
+#communityReportForm {
+    padding: 20px 22px;
+}
+
+.form-section {
+    margin-bottom: 23px;
+}
+
+.field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 750;
+    color: var(--report-dark);
+    margin-bottom: 11px;
+}
+
+.field-label > span {
+    color: #B75D49;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.category-option {
+    cursor: pointer;
+    position: relative;
+    display: block;
+}
+
+.category-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.category-card {
+    min-height: 93px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 12px;
+    border: 1px solid #DDE7DD;
+    border-radius: 10px;
+    background: #FBFDFB;
+    transition: 0.22s ease;
+}
+
+.category-symbol {
+    display: grid;
+    place-items: center;
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+    background: #E6F1E6;
+    color: var(--report-green);
+    font-size: 18px;
+    margin-bottom: 7px;
+}
+
+.category-card strong {
+    color: var(--report-dark);
+    font-size: 11px;
+}
+
+.category-card small {
+    color: var(--report-muted);
+    font-size: 9px;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.category-option:hover .category-card {
+    border-color: #78A987;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(36,81,61,.08);
+}
+
+.category-option input:checked + .category-card {
+    border: 2px solid var(--report-mid);
+    background: #EDF6ED;
+    box-shadow: 0 0 0 3px rgba(67,135,91,.09);
+}
+
+.category-option input:focus-visible + .category-card {
+    outline: 3px solid #9DCBA8;
+    outline-offset: 2px;
+}
+
+.category-wide {
+    grid-column: 1 / -1;
+}
+
+.category-wide .category-card {
+    min-height: 68px;
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    column-gap: 10px;
+}
+
+.category-wide .category-symbol {
+    grid-row: span 2;
+    margin: 0;
+}
+
+.category-wide .category-card small {
+    margin-top: -5px;
+}
+
+/* SELECTS AND TEXTAREA */
+
+#communityReportForm select,
+#communityReportForm textarea {
+    width: 100%;
+    border: 1px solid #D7E3D8;
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--report-text);
+    background: #FBFDFB;
+    font: inherit;
+    font-size: 12px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+#communityReportForm select:focus,
+#communityReportForm textarea:focus {
+    border-color: var(--report-mid);
+    box-shadow: 0 0 0 3px rgba(67,135,91,.12);
+}
+
+#communityReportForm textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.6;
+}
+
+#communityReportForm textarea::placeholder {
+    color: #A0ACA1;
+}
+
+.character-note {
+    color: var(--report-muted);
+    font-size: 10px;
+    line-height: 1.5;
+    margin-top: 7px;
+}
+
+/* SUBMIT BUTTON */
+
+.submit-report {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 0;
+    border-radius: 9px;
+    padding: 15px 18px;
+    background: var(--report-green);
+    color: white;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+.submit-report:hover {
+    background: #36714B;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(36,81,61,.17);
+}
+
+.submit-report:disabled {
+    opacity: .6;
+    cursor: wait;
+    transform: none;
+}
+
+.form-status {
+    margin-top: 12px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    background: #F0F5F0;
+    color: #64776A;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.form-status.success {
+    background: #E5F4E8;
+    color: #24633B;
+}
+
+.form-status.error {
+    background: #FCECE8;
+    color: #9A4338;
+}
+
+.honeypot,
+.submission-frame {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    left: -10000px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* INFORMATION NOTE */
+
+.report-note {
+    display: flex;
+    gap: 13px;
+    margin-top: 24px;
+    padding: 19px 22px;
+    background: #E7F0E8;
+    border: 1px solid #D3E3D4;
+    border-radius: 11px;
+    color: var(--report-green);
+}
+
+.report-note > span {
+    font-size: 20px;
+}
+
+.report-note strong {
+    font-size: 12px;
+    color: var(--report-dark);
+}
+
+.report-note p {
+    margin: 5px 0 0;
+    color: #63766A;
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+/* ANIMATIONS */
+
+@keyframes reportFade {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px) {
+    .report-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .report-map-wrap {
+        height: 380px;
+    }
+
+    .report-hero {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media(max-width:560px) {
+    .report-page {
+        padding: 22px 14px 35px;
+    }
+
+    .report-hero h1 {
+        font-size: 31px;
+    }
+
+    .panel-heading {
+        padding: 17px 15px;
+    }
+
+    #communityReportForm {
+        padding: 17px 15px;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+    }
+
+    .category-card {
+        padding: 9px;
+        min-height: 100px;
+    }
+
+    .report-map-wrap {
+        height: 330px;
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
